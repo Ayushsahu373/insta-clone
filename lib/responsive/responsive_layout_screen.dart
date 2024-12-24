@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:insta_clone/providers/User_providers.dart';
+import 'package:insta_clone/resources/Notifiaction_Services.dart';
 import 'package:insta_clone/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ class ResponsiveLayout extends StatefulWidget {
 class _ResponsiveLayoutState extends State<ResponsiveLayout> {
   @override
   void initState() {
+    PushNotifications.getDeviceToken();
     super.initState();
     addData();
   }

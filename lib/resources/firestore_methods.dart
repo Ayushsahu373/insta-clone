@@ -2,6 +2,7 @@ import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:insta_clone/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
@@ -153,6 +154,27 @@ class FireStoreMethods {
       }
     } catch (e) {
       if (kDebugMode) print(e.toString());
+    }
+  }
+
+  Future<void> saveUserToken(String token) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      print("No authenticated user found.");
+      return;
+    }
+
+    try {
+      // Use `update` or `set` with merge: true to update only the token field
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .set({'token': token}, SetOptions(merge: true));
+
+      print("Token saved to Firestore for user: ${user.uid}");
+    } catch (e) {
+      print("Error in saving token to Firestore: ${e.toString()}");
     }
   }
 }

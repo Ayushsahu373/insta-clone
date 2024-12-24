@@ -50,7 +50,8 @@ class AuthMethods {
           email: email,
           bio: bio,
           followers: [],
-          following: [],
+          following: [], 
+          token: '',
         );
 
         // Adding user to the database
@@ -95,6 +96,11 @@ class AuthMethods {
   // Sign out user
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+   static Future<bool> isLoggedIn() async {
+    var user = FirebaseAuth.instance.currentUser;
+    return user != null;
   }
 }
 

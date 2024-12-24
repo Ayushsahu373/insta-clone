@@ -1,9 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_clone/Screens/Profile_screen.dart';
 import 'package:insta_clone/Screens/Search_Screen.dart';
 import 'package:insta_clone/Screens/add_post_screen.dart';
 import 'package:insta_clone/Screens/feed_screen.dart';
+import 'package:insta_clone/Screens/notification_screen.dart';
 import 'package:insta_clone/providers/User_providers.dart';
 import 'package:insta_clone/utils/colors.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +26,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     // TODO: implement initState
     super.initState();
     pageController = PageController();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print(message);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(message);
+    });
   }
 
   @override
@@ -45,7 +53,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final UserProvider userProvider = Provider.of<UserProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       body: PageView(
@@ -53,10 +61,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           FeedScreen(),
           SearchScreen(),
           AddPostScreen(),
-          Center(
-              child:
-                  Text("notifications", style: TextStyle(color: primaryColor))),
-          ProfileScreen(uid: userProvider.getUser.uid.toString())
+          NotificationScreen(),
+          userProvider.getUser != null
+              ? ProfileScreen(uid: userProvider.getUser!.uid.toString())
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
         ],
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
